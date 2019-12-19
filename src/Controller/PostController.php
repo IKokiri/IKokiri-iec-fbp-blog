@@ -8,14 +8,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 final class PostController
 {
     private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    private SerializerInterface $serializer;
+    
+    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
     {
         $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
     }
     /**
      * @Route("/posts", methods={"GET"})
@@ -42,11 +45,11 @@ final class PostController
      */
     public function create(Request $request): Response
     {
-        $data = json_decode($request->getContent(),true);
-
-        $post = new Post($data['title'],$data['description']);
+     
+        $post = $this->serializer->deserialize($request->getContent(),Post::class,'json');
         $this->entityManager->persist($post);
         $this->entityManager->flush();
+
         return new Response('Ok',Response::HTTP_CREATED);
     }
 
@@ -58,12 +61,13 @@ final class PostController
         /**@var Post $post */
         $post = $this->entityManager->getRepository(Post::class)->find($id);
 
-        return JsonResponse::create([
-            'id'=> $post->getId(),
-            'title'=> $post->title,
-            'descrition'=> $post->description,
-            'createdAt'=> $post->getCreatedAt()->format('Y-m-d'),
-        ]);
+        if(null === $post){
+            throw new NotFoundHttpException('Post não encontrado');
+        }
+
+        return JsonResponse::fromJsonString($this->serializer->serialize($post,'json'));
+       
+
     }
 
     /**
