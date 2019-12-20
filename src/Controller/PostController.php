@@ -14,7 +14,7 @@ final class PostController
 {
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
-    
+
     public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
     {
         $this->entityManager = $entityManager;
@@ -49,7 +49,6 @@ final class PostController
         $post = $this->serializer->deserialize($request->getContent(),Post::class,'json');
         $this->entityManager->persist($post);
         $this->entityManager->flush();
-
         return new Response('Ok',Response::HTTP_CREATED);
     }
 
