@@ -45,16 +45,15 @@ class PostControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
-    // public function teste_create_post_with_invalid_title(): void
-    // {
+    public function teste_create_post_with_invalid_title(): void
+    {
         
-    //     $this->client->request('POST','/posts',[],[],[], json_encode([
-    //         'title'=>1234,
-    //         'description' => 'Alguma descrição'
-    //     ]));
+        $this->client->request('POST','/posts',[],[],[], json_encode([
+            'description' => null
+        ]));
 
-    //     $this->assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-    // }
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
 
     public function test_delete_post(): void
     {

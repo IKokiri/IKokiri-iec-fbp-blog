@@ -3,22 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Exception\ValidationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class PostController
 {
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
+        $this->validator = $validator;
     }
     /**
      * @Route("/posts", methods={"GET"})
@@ -45,10 +48,20 @@ final class PostController
      */
     public function create(Request $request): Response
     {
-     
+        
         $post = $this->serializer->deserialize($request->getContent(),Post::class,'json');
+        
+        // dump($post);
+        
+        $erros = $this->validator->validate($post);
+        
+        if(count($erros)){
+            throw new ValidationException($erros);
+        }
+        
         $this->entityManager->persist($post);
         $this->entityManager->flush();
+
         return new Response('Ok',Response::HTTP_CREATED);
     }
 
