@@ -74,12 +74,11 @@ final class PostController
         $post = $this->entityManager->getRepository(Post::class)->find($id);
 
         if(null === $post){
-            throw new NotFoundHttpException('Post não encontrado');
+            return new Response("Nenhum dado encontrado",Response::HTTP_OK);
         }
-
-        return JsonResponse::fromJsonString($this->serializer->serialize($post,'json'));
-       
-
+        
+        return new Response(JsonResponse::fromJsonString($this->serializer->serialize($post,'json')),Response::HTTP_OK);
+        //return JsonResponse::fromJsonString($this->serializer->serialize($post,'json'));
     }
 
     /**

@@ -66,17 +66,37 @@ class PostControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_NO_CONTENT, $this->client->getResponse()->getStatusCode());
     }
 
-    // public function test_update_post(): void
-    // {
-    //     $client = static::createClient();
-    //     $client->request('DELETE','/posts/8',[],[],[],json_encode([
-    //         'id'=>7,
-    //         'title'=>'123',
-    //         'description'=>'456'
-    //     ]));
+    public function test_update_post(): void
+    {
+        $post = new Post('asd','asdasd');
+        $this->em->persist($post);
+        $this->em->flush();
 
-    //     $this->assertEquals(200, $client->getResponse()->getStatusCode());
-    // }
+        $this->client->request('DELETE','/posts/1',[],[],[],json_encode([
+            'title'=>'a123',
+            'description'=>'b456'
+        ]));
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_busca_um_post(): void
+    {
+        $post = new Post('asd','asdasd');
+        $this->em->persist($post);
+        $this->em->flush();
+
+        $this->client->request('GET','/posts/1',[],[],[]);
+
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_busca_um_post_nao_existente(): void
+    {
+        $this->client->request('GET','/posts/1000',[],[],[]);
+
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
 }
     
 
