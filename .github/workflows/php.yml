@@ -20,10 +20,10 @@ jobs:
         sudo apt -y install php7.4 php7.4-xml php7.4-mbstring php7.4-sqlite
 
     - name: Valida arquivos composer.[json|lock]
-      run: cd ../../IKokiri-iec-fbp-blog && composer validate
+      run: cd ../../aIKokiri-iec-fbp-blog && composer validate
 
     - name: Instala dependências
-      run: cd ../../IKokiri-iec-fbp-blog && composer install --prefer-dist --no-progress --no-suggest
+      run: cd ../../aIKokiri-iec-fbp-blog && composer install --prefer-dist --no-progress --no-suggest
 
     - name: Testes funcionais
-      run: cd ../../IKokiri-iec-fbp-blog && bin/phpunit
+      run: cd ../../IaKokiri-iec-fbp-blog && bin/phpunit
