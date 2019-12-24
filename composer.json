@@ -1,4 +1,6 @@
 {
+    "name":"luizmendes/blog",
+    "description": "Blog disciplica php",
     "type": "project",
     "license": "proprietary",
     "require": {
